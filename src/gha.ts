@@ -20,7 +20,7 @@ export interface GitHubActionsEnv {
 }
 
 export interface Step {
-  success: boolean
+  outcome: 'success' | 'failure' | 'skipped'
 }
 
 export type Steps = {

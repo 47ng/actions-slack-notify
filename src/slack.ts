@@ -10,7 +10,9 @@ import {
 export function success(env: GitHubActionsEnv) {
   const { GITHUB_WORKFLOW, GITHUB_REPOSITORY } = env
   const urls = getURLs(env)
-  const msg = Message().blocks(
+  const msg = Message({
+    text: `✔︎ ${GITHUB_WORKFLOW} passed on ${GITHUB_REPOSITORY}`
+  }).blocks(
     Blocks.Section({
       text: `*✔︎ ${GITHUB_WORKFLOW}* passed on <${urls.repo}|*${GITHUB_REPOSITORY}*>`
     })
@@ -28,10 +30,12 @@ export function failure(env: GitHubActionsEnv, steps: Steps) {
   const { GITHUB_WORKFLOW, GITHUB_REPOSITORY } = env
   const urls = getURLs(env)
   const failedStepIDs = Object.entries(steps)
-    .filter(({ 1: step }) => !step.success)
+    .filter(({ 1: step }) => step.outcome === 'failure')
     .map(([id]) => id)
 
-  const msg = Message().blocks([
+  const msg = Message({
+    text: `🚨 ${GITHUB_WORKFLOW} failed on ${GITHUB_REPOSITORY}`
+  }).blocks([
     Blocks.Section({
       text: `*🚨 ${GITHUB_WORKFLOW}* failed on <${urls.repo}|*${GITHUB_REPOSITORY}*>`
     })
