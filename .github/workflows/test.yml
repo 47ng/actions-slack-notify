@@ -1,4 +1,4 @@
-name: 'build-test'
+name: Test name
 on: # rebuild any PRs and main branch changes
   pull_request:
   push:
@@ -19,6 +19,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: ./
+        if: ${{ !env.ACT }}
+      - uses: actions/checkout@v2
+        if: ${{ env.ACT }}
         with:
-          milliseconds: 1000
+          path: actions-slack-notify
+      - uses: ./
+        if: always()
+        with:
+          status: failure
+          steps: ${{ toJson(steps) }}
