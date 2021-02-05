@@ -19,7 +19,7 @@ export function success(env: GitHubActionsEnv) {
   const actions = getActions(env, 'failure')
   msg.blocks([context, actions])
   msg.printPreviewUrl()
-  return msg.buildToJSON()
+  return msg.buildToObject()
 }
 
 // --
@@ -45,7 +45,7 @@ export function failure(env: GitHubActionsEnv, steps: Steps) {
   const actions = getActions(env, 'failure')
   msg.blocks([context, actions])
   msg.printPreviewUrl()
-  return msg.buildToJSON()
+  return msg.buildToObject()
 }
 
 // --

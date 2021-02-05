@@ -1,7 +1,7 @@
 import * as core from '@actions/core'
 import { GitHubActionsEnv } from './gha'
 import { failure, success } from './slack'
-import { IncomingWebhook } from '@slack/webhook'
+import { IncomingWebhook, IncomingWebhookSendArguments } from '@slack/webhook'
 
 async function run(): Promise<void> {
   try {
@@ -15,14 +15,15 @@ async function run(): Promise<void> {
       | 'failure'
       | 'cancelled'
     const env = (process.env as unknown) as GitHubActionsEnv
+    core.info(core.getInput('steps'))
     if (status === 'success') {
       const msg = success(env)
-      core.debug(msg)
-      await webhook.send(msg)
+      core.debug(JSON.stringify(msg, null, 2))
+      await webhook.send(msg as IncomingWebhookSendArguments)
     } else if (status === 'failure') {
       const msg = failure(env, JSON.parse(core.getInput('steps')))
-      core.debug(msg)
-      await webhook.send(msg)
+      core.debug(JSON.stringify(msg, null, 2))
+      await webhook.send(msg as IncomingWebhookSendArguments)
     }
   } catch (error) {
     core.setFailed(error.message)
