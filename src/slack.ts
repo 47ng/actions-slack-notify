@@ -34,7 +34,7 @@ export function failure(env: GitHubActionsEnv, steps: Steps) {
       const icon = {
         failure: '✘',
         success: '✔︎',
-        skipped: '-'
+        skipped: '○'
       }[outcome]
       const format = {
         failure: '*',
