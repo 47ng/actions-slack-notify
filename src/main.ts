@@ -15,6 +15,13 @@ async function run(): Promise<void> {
       | 'failure'
       | 'cancelled'
     const env = (process.env as unknown) as GitHubActionsEnv
+    core.info(
+      JSON.stringify({
+        GITHUB_ACTION: env.GITHUB_ACTION,
+        GITHUB_RUN_NUMBER: env.GITHUB_RUN_NUMBER,
+        GITHUB_RUN_ID: env.GITHUB_RUN_ID
+      })
+    )
     core.info(core.getInput('steps'))
     if (status === 'success') {
       const msg = success(env)
