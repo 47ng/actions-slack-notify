@@ -1,3 +1,4 @@
+import * as core from '@actions/core'
 import { Message, Blocks, Elements } from 'slack-block-builder'
 import {
   getPRNumber,
@@ -29,33 +30,35 @@ export function success(env: GitHubActionsEnv) {
 export function failure(env: GitHubActionsEnv, steps: Steps) {
   const { GITHUB_WORKFLOW, GITHUB_REPOSITORY } = env
   const urls = getURLs(env)
-  const stepsText = Object.entries(steps)
-    .map(([id, { outcome }]) => {
-      const icon = {
-        failure: '✘',
-        success: '✔︎',
-        skipped: '○'
-      }[outcome]
-      const format = {
-        failure: '*',
-        success: '',
-        skipped: '_'
-      }[outcome]
-      return `${format}${icon}  ${id}${format}`
-    })
-    .join('\n')
+
+  const jobName = core.getInput('jobName')
+  const runName = `${GITHUB_WORKFLOW}/${jobName}`
 
   const msg = Message({
-    text: `🚨 ${GITHUB_WORKFLOW} failed on ${GITHUB_REPOSITORY}`
+    text: `🚨 ${runName} failed on ${GITHUB_REPOSITORY}`
   }).blocks([
     Blocks.Section({
-      text: `*🚨 ${GITHUB_WORKFLOW}* failed on <${urls.repo}|*${GITHUB_REPOSITORY}*>`
+      text: `*🚨 ${runName}* failed on <${urls.repo}|*${GITHUB_REPOSITORY}*>`
     })
   ])
-  if (stepsText) {
+  if (Object.keys(steps).length > 0) {
     msg.blocks(
       Blocks.Section({
-        text: stepsText
+        text: Object.entries(steps)
+          .map(([id, { outcome }]) => {
+            const icon = {
+              failure: '✘',
+              success: '✔︎',
+              skipped: '○'
+            }[outcome]
+            const format = {
+              failure: '*',
+              success: '',
+              skipped: '_'
+            }[outcome]
+            return `${format}${icon}  ${id}${format}`
+          })
+          .join('\n')
       })
     )
   }

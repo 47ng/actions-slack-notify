@@ -6,10 +6,8 @@ inputs:
     required: true
   steps:
     default: '{}'
-  milliseconds: # change this
-    required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+  jobName:
+    required: false
 runs:
   using: 'node12'
   main: 'dist/index.js'

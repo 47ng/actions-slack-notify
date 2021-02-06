@@ -1,4 +1,4 @@
-name: Continuous Integration
+name: CI
 
 on: # rebuild any PRs and main branch changes
   pull_request:
@@ -28,6 +28,7 @@ jobs:
         with:
           status: ${{ job.status }}
           steps: ${{ toJson(steps) }}
+          jobName: ${{ job.name }}
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
   test: # make sure the action works on a clean machine without building
@@ -45,5 +46,6 @@ jobs:
         with:
           status: ${{ job.status }}
           steps: ${{ toJson(steps) }}
+          jobName: ${{ job.name }}
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
