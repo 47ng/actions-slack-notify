@@ -32,7 +32,7 @@ export function failure(env: GitHubActionsEnv, steps: Steps) {
   const urls = getURLs(env)
 
   const jobName = core.getInput('jobName')
-  const runName = `${GITHUB_WORKFLOW}/${jobName}`
+  const runName = jobName ? `${GITHUB_WORKFLOW}/${jobName}` : GITHUB_WORKFLOW
 
   const msg = Message({
     text: `🚨 ${runName} failed on ${GITHUB_REPOSITORY}`
