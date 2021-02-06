@@ -29,9 +29,21 @@ export function success(env: GitHubActionsEnv) {
 export function failure(env: GitHubActionsEnv, steps: Steps) {
   const { GITHUB_WORKFLOW, GITHUB_REPOSITORY } = env
   const urls = getURLs(env)
-  const failedStepIDs = Object.entries(steps)
-    .filter(({ 1: step }) => step.outcome === 'failure')
-    .map(([id]) => id)
+  const stepsText = Object.entries(steps)
+    .map(([id, { outcome }]) => {
+      const icon = {
+        failure: '✘',
+        success: '✔︎',
+        skipped: '-'
+      }[outcome]
+      const format = {
+        failure: '*',
+        success: '',
+        skipped: '_'
+      }[outcome]
+      return `${format}${icon}  ${id}${format}`
+    })
+    .join('\n')
 
   const msg = Message({
     text: `🚨 ${GITHUB_WORKFLOW} failed on ${GITHUB_REPOSITORY}`
@@ -40,9 +52,11 @@ export function failure(env: GitHubActionsEnv, steps: Steps) {
       text: `*🚨 ${GITHUB_WORKFLOW}* failed on <${urls.repo}|*${GITHUB_REPOSITORY}*>`
     })
   ])
-  if (failedStepIDs.length > 0) {
+  if (stepsText) {
     msg.blocks(
-      Blocks.Section().text(failedStepIDs.map(id => `*✘  ${id}*`).join('\n'))
+      Blocks.Section({
+        text: stepsText
+      })
     )
   }
   const context = getContext(env)

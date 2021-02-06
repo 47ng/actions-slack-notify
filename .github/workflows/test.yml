@@ -17,12 +17,12 @@ jobs:
         run: yarn
       - id: build
         run: yarn build
-      - id: lint
-        run: yarn lint
       - id: package
         run: yarn package
       - id: test
         run: yarn test
+      - id: lint
+        run: yarn lint
       - uses: ./
         if: always()
         with:
