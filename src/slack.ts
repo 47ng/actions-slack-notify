@@ -11,11 +11,13 @@ import {
 export function success(env: GitHubActionsEnv) {
   const { GITHUB_WORKFLOW, GITHUB_REPOSITORY } = env
   const urls = getURLs(env)
+  const jobName = core.getInput('jobName')
+  const runName = jobName ? `${GITHUB_WORKFLOW}/${jobName}` : GITHUB_WORKFLOW
   const msg = Message({
-    text: `✔︎ ${GITHUB_WORKFLOW} passed on ${GITHUB_REPOSITORY}`
+    text: `✔︎ ${runName} passed on ${GITHUB_REPOSITORY}`
   }).blocks(
     Blocks.Section({
-      text: `*✔︎ ${GITHUB_WORKFLOW}* passed on <${urls.repo}|*${GITHUB_REPOSITORY}*>`
+      text: `*✔︎ ${runName}* passed on <${urls.repo}|*${GITHUB_REPOSITORY}*>`
     })
   )
   const context = getContext(env)
