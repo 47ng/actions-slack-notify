@@ -15,8 +15,6 @@ async function run(): Promise<void> {
       | 'failure'
       | 'cancelled'
     const env = (process.env as unknown) as GitHubActionsEnv
-    const { SLACK_WEBHOOK_URL, GITHUB_TOKEN, ...safeEnv } = process.env
-    core.info(JSON.stringify(safeEnv, null, 2))
     core.info(core.getInput('steps'))
     if (status === 'success') {
       const msg = success(env)

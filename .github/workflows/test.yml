@@ -17,8 +17,8 @@ jobs:
         run: yarn
       - id: build
         run: yarn build
-      #- id: lint
-      #  run: yarn lint
+      - id: lint
+        run: yarn lint
       - id: package
         run: yarn package
       - id: test
