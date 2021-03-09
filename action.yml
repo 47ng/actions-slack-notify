@@ -1,6 +1,9 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: Notify to Slack
+description: Notify job status to Slack, with context and useful links
+author: François Best
+branding:
+  icon: send
+  color: red
 inputs:
   status:
     required: true
