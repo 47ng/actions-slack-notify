@@ -1,5 +1,5 @@
 import * as core from '@actions/core'
-import { Message, Blocks, Elements } from 'slack-block-builder'
+import { Blocks, Elements, Message } from 'slack-block-builder'
 import {
   getPRNumber,
   getRefContext,
@@ -21,7 +21,7 @@ export function success(env: GitHubActionsEnv) {
     })
   )
   const context = getContext(env)
-  const actions = getActions(env, 'failure')
+  const actions = getActions(env, 'success')
   msg.blocks([context, actions])
   msg.printPreviewUrl()
   return msg.buildToObject()

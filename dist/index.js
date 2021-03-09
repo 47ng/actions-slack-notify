@@ -188,7 +188,7 @@ function success(env) {
         text: `*✔︎ ${runName}* passed on <${urls.repo}|*${GITHUB_REPOSITORY}*>`
     }));
     const context = getContext(env);
-    const actions = getActions(env, 'failure');
+    const actions = getActions(env, 'success');
     msg.blocks([context, actions]);
     msg.printPreviewUrl();
     return msg.buildToObject();
