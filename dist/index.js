@@ -196,14 +196,14 @@ function success(env) {
     const jobName = core.getInput('jobName');
     const runName = jobName ? `${GITHUB_WORKFLOW}/${jobName}` : GITHUB_WORKFLOW;
     const msg = slack_block_builder_1.Message({
-        text: `✔︎ ${runName} passed on ${GITHUB_REPOSITORY}`
+        text: `✔︎  ${runName} passed on ${GITHUB_REPOSITORY}`
     }).blocks(slack_block_builder_1.Blocks.Section({
-        text: `*✔︎ ${runName}* passed on <${urls.repo}|*${GITHUB_REPOSITORY}*>`
+        text: `*✔︎  ${runName}* passed on <${urls.repo}|*${GITHUB_REPOSITORY}*>`
     }));
     const dependabot = gha_1.parseDependabotRef(GITHUB_HEAD_REF);
     if (dependabot) {
         msg.blocks(slack_block_builder_1.Blocks.Section({
-            text: `📦 *${dependabot.package}* ${dependabot.version} _(by Dependabot)_`
+            text: `📦  *${dependabot.package}* ${dependabot.version} _(by Dependabot)_`
         }));
     }
     const context = getContext(env);
@@ -220,16 +220,16 @@ function failure(env, steps) {
     const jobName = core.getInput('jobName');
     const runName = jobName ? `${GITHUB_WORKFLOW}/${jobName}` : GITHUB_WORKFLOW;
     const msg = slack_block_builder_1.Message({
-        text: `🚨 ${runName} failed on ${GITHUB_REPOSITORY}`
+        text: `🚨  ${runName} failed on ${GITHUB_REPOSITORY}`
     }).blocks([
         slack_block_builder_1.Blocks.Section({
-            text: `*🚨 ${runName}* failed on <${urls.repo}|*${GITHUB_REPOSITORY}*>`
+            text: `*🚨  ${runName}* failed on <${urls.repo}|*${GITHUB_REPOSITORY}*>`
         })
     ]);
     const dependabot = gha_1.parseDependabotRef(GITHUB_HEAD_REF);
     if (dependabot) {
         msg.blocks(slack_block_builder_1.Blocks.Section({
-            text: `📦 *${dependabot.package}* ${dependabot.version} _(by Dependabot)_`
+            text: `📦  *${dependabot.package}* ${dependabot.version} _(by Dependabot)_`
         }));
     }
     if (Object.keys(steps).length > 0) {
@@ -265,7 +265,6 @@ function getContext(env) {
     return slack_block_builder_1.Blocks.Context().elements([
         `From <${urls.commit}|\`${shortSha}\`> on ${gha_1.getRefContext(env.GITHUB_REF)}`,
         `Triggered by *${env.GITHUB_EVENT_NAME}*`
-        // ...(duration ? [`Took *${duration}*`] : [])
     ]);
 }
 exports.getContext = getContext;

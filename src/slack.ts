@@ -15,17 +15,17 @@ export function success(env: GitHubActionsEnv) {
   const jobName = core.getInput('jobName')
   const runName = jobName ? `${GITHUB_WORKFLOW}/${jobName}` : GITHUB_WORKFLOW
   const msg = Message({
-    text: `✔︎ ${runName} passed on ${GITHUB_REPOSITORY}`
+    text: `✔︎  ${runName} passed on ${GITHUB_REPOSITORY}`
   }).blocks(
     Blocks.Section({
-      text: `*✔︎ ${runName}* passed on <${urls.repo}|*${GITHUB_REPOSITORY}*>`
+      text: `*✔︎  ${runName}* passed on <${urls.repo}|*${GITHUB_REPOSITORY}*>`
     })
   )
   const dependabot = parseDependabotRef(GITHUB_HEAD_REF)
   if (dependabot) {
     msg.blocks(
       Blocks.Section({
-        text: `📦 *${dependabot.package}* ${dependabot.version} _(by Dependabot)_`
+        text: `📦  *${dependabot.package}* ${dependabot.version} _(by Dependabot)_`
       })
     )
   }
@@ -46,17 +46,17 @@ export function failure(env: GitHubActionsEnv, steps: Steps) {
   const runName = jobName ? `${GITHUB_WORKFLOW}/${jobName}` : GITHUB_WORKFLOW
 
   const msg = Message({
-    text: `🚨 ${runName} failed on ${GITHUB_REPOSITORY}`
+    text: `🚨  ${runName} failed on ${GITHUB_REPOSITORY}`
   }).blocks([
     Blocks.Section({
-      text: `*🚨 ${runName}* failed on <${urls.repo}|*${GITHUB_REPOSITORY}*>`
+      text: `*🚨  ${runName}* failed on <${urls.repo}|*${GITHUB_REPOSITORY}*>`
     })
   ])
   const dependabot = parseDependabotRef(GITHUB_HEAD_REF)
   if (dependabot) {
     msg.blocks(
       Blocks.Section({
-        text: `📦 *${dependabot.package}* ${dependabot.version} _(by Dependabot)_`
+        text: `📦  *${dependabot.package}* ${dependabot.version} _(by Dependabot)_`
       })
     )
   }
@@ -96,7 +96,6 @@ export function getContext(env: GitHubActionsEnv) {
   return Blocks.Context().elements([
     `From <${urls.commit}|\`${shortSha}\`> on ${getRefContext(env.GITHUB_REF)}`,
     `Triggered by *${env.GITHUB_EVENT_NAME}*`
-    // ...(duration ? [`Took *${duration}*`] : [])
   ])
 }
 
