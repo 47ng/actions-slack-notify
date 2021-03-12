@@ -203,7 +203,7 @@ function success(env) {
     const dependabot = gha_1.parseDependabotRef(GITHUB_HEAD_REF);
     if (dependabot) {
         msg.blocks(slack_block_builder_1.Blocks.Section({
-            text: `📦 **${dependabot.package}** ${dependabot.version} _(by Dependabot)_`
+            text: `📦 *${dependabot.package}* ${dependabot.version} _(by Dependabot)_`
         }));
     }
     const context = getContext(env);
@@ -229,7 +229,7 @@ function failure(env, steps) {
     const dependabot = gha_1.parseDependabotRef(GITHUB_HEAD_REF);
     if (dependabot) {
         msg.blocks(slack_block_builder_1.Blocks.Section({
-            text: `📦 **${dependabot.package}** ${dependabot.version} _(by Dependabot)_`
+            text: `📦 *${dependabot.package}* ${dependabot.version} _(by Dependabot)_`
         }));
     }
     if (Object.keys(steps).length > 0) {

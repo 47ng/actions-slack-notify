@@ -25,7 +25,7 @@ export function success(env: GitHubActionsEnv) {
   if (dependabot) {
     msg.blocks(
       Blocks.Section({
-        text: `📦 **${dependabot.package}** ${dependabot.version} _(by Dependabot)_`
+        text: `📦 *${dependabot.package}* ${dependabot.version} _(by Dependabot)_`
       })
     )
   }
@@ -56,7 +56,7 @@ export function failure(env: GitHubActionsEnv, steps: Steps) {
   if (dependabot) {
     msg.blocks(
       Blocks.Section({
-        text: `📦 **${dependabot.package}** ${dependabot.version} _(by Dependabot)_`
+        text: `📦 *${dependabot.package}* ${dependabot.version} _(by Dependabot)_`
       })
     )
   }
