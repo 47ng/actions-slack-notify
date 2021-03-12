@@ -32,8 +32,23 @@ export type Steps = {
 const PR_REF_REGEX = /^refs\/pull\/(\d+)\/merge$/
 const BRANCH_REF_REGEX = /^refs\/heads\/(.+)$/
 const TAG_REF_REGEX = /^refs\/tags\/(.+)$/
+const DEPENDABOT_REGEX = /^dependabot\/(?:[\w]+)\/([\w/-]+)-([\d]+\.[\d]+\.[\d]+.*)$/
 
 // --
+
+export function parseDependabotRef(ref?: string) {
+  if (!ref) {
+    return undefined
+  }
+  const match = ref.match(DEPENDABOT_REGEX)
+  if (!match) {
+    return undefined
+  }
+  return {
+    package: match[1].includes('/') ? `@${match[1]}` : match[1],
+    version: match[2]
+  }
+}
 
 export function getPRNumber(ref: string) {
   const match = ref.match(PR_REF_REGEX)

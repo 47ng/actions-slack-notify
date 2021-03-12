@@ -5,11 +5,12 @@ import {
   getRefContext,
   getURLs,
   GitHubActionsEnv,
+  parseDependabotRef,
   Steps
 } from './gha'
 
 export function success(env: GitHubActionsEnv) {
-  const { GITHUB_WORKFLOW, GITHUB_REPOSITORY } = env
+  const { GITHUB_WORKFLOW, GITHUB_REPOSITORY, GITHUB_HEAD_REF } = env
   const urls = getURLs(env)
   const jobName = core.getInput('jobName')
   const runName = jobName ? `${GITHUB_WORKFLOW}/${jobName}` : GITHUB_WORKFLOW
@@ -20,6 +21,14 @@ export function success(env: GitHubActionsEnv) {
       text: `*✔︎ ${runName}* passed on <${urls.repo}|*${GITHUB_REPOSITORY}*>`
     })
   )
+  const dependabot = parseDependabotRef(GITHUB_HEAD_REF)
+  if (dependabot) {
+    msg.blocks(
+      Blocks.Section({
+        text: `📦 **${dependabot.package}** ${dependabot.version} _(by Dependabot)_`
+      })
+    )
+  }
   const context = getContext(env)
   const actions = getActions(env, 'success')
   msg.blocks([context, actions])
@@ -30,7 +39,7 @@ export function success(env: GitHubActionsEnv) {
 // --
 
 export function failure(env: GitHubActionsEnv, steps: Steps) {
-  const { GITHUB_WORKFLOW, GITHUB_REPOSITORY } = env
+  const { GITHUB_WORKFLOW, GITHUB_REPOSITORY, GITHUB_HEAD_REF } = env
   const urls = getURLs(env)
 
   const jobName = core.getInput('jobName')
@@ -43,6 +52,14 @@ export function failure(env: GitHubActionsEnv, steps: Steps) {
       text: `*🚨 ${runName}* failed on <${urls.repo}|*${GITHUB_REPOSITORY}*>`
     })
   ])
+  const dependabot = parseDependabotRef(GITHUB_HEAD_REF)
+  if (dependabot) {
+    msg.blocks(
+      Blocks.Section({
+        text: `📦 **${dependabot.package}** ${dependabot.version} _(by Dependabot)_`
+      })
+    )
+  }
   if (Object.keys(steps).length > 0) {
     msg.blocks(
       Blocks.Section({

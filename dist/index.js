@@ -16,12 +16,27 @@ module.exports = JSON.parse("{\"name\":\"@slack/webhook\",\"version\":\"6.0.0\",
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getURLs = exports.getRefContext = exports.getTag = exports.getBranch = exports.getPRNumber = void 0;
+exports.getURLs = exports.getRefContext = exports.getTag = exports.getBranch = exports.getPRNumber = exports.parseDependabotRef = void 0;
 // --
 const PR_REF_REGEX = /^refs\/pull\/(\d+)\/merge$/;
 const BRANCH_REF_REGEX = /^refs\/heads\/(.+)$/;
 const TAG_REF_REGEX = /^refs\/tags\/(.+)$/;
+const DEPENDABOT_REGEX = /^dependabot\/(?:[\w]+)\/([\w/-]+)-([\d]+\.[\d]+\.[\d]+.*)$/;
 // --
+function parseDependabotRef(ref) {
+    if (!ref) {
+        return undefined;
+    }
+    const match = ref.match(DEPENDABOT_REGEX);
+    if (!match) {
+        return undefined;
+    }
+    return {
+        package: match[1].includes('/') ? `@${match[1]}` : match[1],
+        version: match[2]
+    };
+}
+exports.parseDependabotRef = parseDependabotRef;
 function getPRNumber(ref) {
     const match = ref.match(PR_REF_REGEX);
     if (!match)
@@ -114,8 +129,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(2186));
-const slack_1 = __nccwpck_require__(568);
 const webhook_1 = __nccwpck_require__(1095);
+const slack_1 = __nccwpck_require__(568);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -129,12 +144,10 @@ function run() {
             core.info(core.getInput('steps'));
             if (status === 'success') {
                 const msg = slack_1.success(env);
-                core.debug(JSON.stringify(msg, null, 2));
                 yield webhook.send(msg);
             }
             else if (status === 'failure') {
                 const msg = slack_1.failure(env, JSON.parse(core.getInput('steps')));
-                core.debug(JSON.stringify(msg, null, 2));
                 yield webhook.send(msg);
             }
         }
@@ -178,7 +191,7 @@ const core = __importStar(__nccwpck_require__(2186));
 const slack_block_builder_1 = __nccwpck_require__(8850);
 const gha_1 = __nccwpck_require__(7907);
 function success(env) {
-    const { GITHUB_WORKFLOW, GITHUB_REPOSITORY } = env;
+    const { GITHUB_WORKFLOW, GITHUB_REPOSITORY, GITHUB_HEAD_REF } = env;
     const urls = gha_1.getURLs(env);
     const jobName = core.getInput('jobName');
     const runName = jobName ? `${GITHUB_WORKFLOW}/${jobName}` : GITHUB_WORKFLOW;
@@ -187,6 +200,12 @@ function success(env) {
     }).blocks(slack_block_builder_1.Blocks.Section({
         text: `*✔︎ ${runName}* passed on <${urls.repo}|*${GITHUB_REPOSITORY}*>`
     }));
+    const dependabot = gha_1.parseDependabotRef(GITHUB_HEAD_REF);
+    if (dependabot) {
+        msg.blocks(slack_block_builder_1.Blocks.Section({
+            text: `📦 **${dependabot.package}** ${dependabot.version} _(by Dependabot)_`
+        }));
+    }
     const context = getContext(env);
     const actions = getActions(env, 'success');
     msg.blocks([context, actions]);
@@ -196,7 +215,7 @@ function success(env) {
 exports.success = success;
 // --
 function failure(env, steps) {
-    const { GITHUB_WORKFLOW, GITHUB_REPOSITORY } = env;
+    const { GITHUB_WORKFLOW, GITHUB_REPOSITORY, GITHUB_HEAD_REF } = env;
     const urls = gha_1.getURLs(env);
     const jobName = core.getInput('jobName');
     const runName = jobName ? `${GITHUB_WORKFLOW}/${jobName}` : GITHUB_WORKFLOW;
@@ -207,6 +226,12 @@ function failure(env, steps) {
             text: `*🚨 ${runName}* failed on <${urls.repo}|*${GITHUB_REPOSITORY}*>`
         })
     ]);
+    const dependabot = gha_1.parseDependabotRef(GITHUB_HEAD_REF);
+    if (dependabot) {
+        msg.blocks(slack_block_builder_1.Blocks.Section({
+            text: `📦 **${dependabot.package}** ${dependabot.version} _(by Dependabot)_`
+        }));
+    }
     if (Object.keys(steps).length > 0) {
         msg.blocks(slack_block_builder_1.Blocks.Section({
             text: Object.entries(steps)
