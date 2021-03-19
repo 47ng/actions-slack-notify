@@ -7,7 +7,10 @@ async function run(): Promise<void> {
   try {
     const url = process.env.SLACK_WEBHOOK_URL
     if (!url) {
-      throw new Error('Missing SLACK_WEBHOOK_URL environment variable')
+      core.info(
+        'No SLACK_WEBHOOK_URL environment variable provided, skipping sending Slack notification.'
+      )
+      return
     }
     const webhook = new IncomingWebhook(url)
     const status = core.getInput('status') as
