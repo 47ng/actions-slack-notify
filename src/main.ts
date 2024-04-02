@@ -8,6 +8,7 @@ async function run(): Promise<void> {
     const url = process.env.SLACK_WEBHOOK_URL
     if (!url) {
       core.info(
+        // eslint-disable-next-line i18n-text/no-en
         'No SLACK_WEBHOOK_URL environment variable provided, skipping sending Slack notification.'
       )
       return
@@ -17,7 +18,7 @@ async function run(): Promise<void> {
       | 'success'
       | 'failure'
       | 'cancelled'
-    const env = (process.env as unknown) as GitHubActionsEnv
+    const env = process.env as unknown as GitHubActionsEnv
     core.info(core.getInput('steps'))
     if (status === 'success') {
       const msg = success(env)
@@ -27,7 +28,11 @@ async function run(): Promise<void> {
       await webhook.send(msg as IncomingWebhookSendArguments)
     }
   } catch (error) {
-    core.setFailed(error.message)
+    if (error instanceof Error) {
+      core.setFailed(error.message)
+    } else {
+      core.setFailed(String(error))
+    }
   }
 }
 

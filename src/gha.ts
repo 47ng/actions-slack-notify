@@ -32,7 +32,8 @@ export type Steps = {
 const PR_REF_REGEX = /^refs\/pull\/(\d+)\/merge$/
 const BRANCH_REF_REGEX = /^refs\/heads\/(.+)$/
 const TAG_REF_REGEX = /^refs\/tags\/(.+)$/
-const DEPENDABOT_REGEX = /^dependabot\/(?:[\w]+)\/([\w/-]+)-([\d]+\.[\d]+\.[\d]+.*)$/
+const DEPENDABOT_REGEX =
+  /^dependabot\/(?:[\w]+)\/([\w/-]+)-([\d]+\.[\d]+\.[\d]+.*)$/
 
 // --
 
