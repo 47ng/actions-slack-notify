@@ -7,10 +7,14 @@ branding:
 inputs:
   status:
     required: true
+    description: 'The status of the job'
   steps:
+    description: 'Set to ${{ toJson(steps) }} to detail out successful/failed steps'
+    required: false
     default: '{}'
   jobName:
+    description: 'The name of the job'
     required: false
 runs:
-  using: 'node12'
+  using: 'node20'
   main: 'dist/index.js'
