@@ -23,7 +23,7 @@ jobs:
         run: yarn test
       - id: lint
         run: yarn lint
-      - uses: '.'
+      - uses: ./
         if: always()
         with:
           status: ${{ job.status }}
@@ -36,7 +36,7 @@ jobs:
     name: Integration Tests
     steps:
       - uses: actions/checkout@v4
-      - uses: '.'
+      - uses: ./
         if: always()
         with:
           status: ${{ job.status }}
