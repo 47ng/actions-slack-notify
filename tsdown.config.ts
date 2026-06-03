@@ -13,6 +13,6 @@ export default defineConfig({
   // would otherwise emit .cjs for the cjs format).
   outExtensions: () => ({ js: ".js" }),
   deps: {
-    alwaysBundle: ["@actions/core", "@slack/webhook", "slack-block-builder"],
+    alwaysBundle: ["@actions/core", "@slack/webhook"],
   },
 });

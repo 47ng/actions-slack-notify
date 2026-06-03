@@ -14,10 +14,10 @@ importers:
       '@slack/webhook':
         specifier: 7.0.9
         version: 7.0.9
-      slack-block-builder:
-        specifier: ^2.8.0
-        version: 2.8.0
     devDependencies:
+      '@slack/types':
+        specifier: 2.21.1
+        version: 2.21.1
       '@types/node':
         specifier: ^24.0.0
         version: 24.12.4
@@ -1238,9 +1238,6 @@ packages:
   siginfo@2.0.0:
     resolution: {integrity: sha512-ybx0WO1/8bSBLEWXZvEd7gMW3Sn3JFlW3TvX1nREbDLRNQNaeNN8WK0meBwPdAaOI7TtRRRJn/Es1zhrrCHu7g==}
 
-  slack-block-builder@2.8.0:
-    resolution: {integrity: sha512-iisM+j99iKRuQFVfdWo0FiszDAl3r8Snq704oZH6C0RbDqvoVQStiptt6Y7kc6RX/5hSAqTqjhgvZ/di8cvaIA==}
-
   smol-toml@1.6.1:
     resolution: {integrity: sha512-dWUG8F5sIIARXih1DTaQAX4SsiTXhInKf1buxdY9DIg4ZYPZK5nGM1VRIYmEbDbsHt7USo99xSLFu5Q1IqTmsg==}
     engines: {node: '>= 18'}
@@ -2371,8 +2368,6 @@ snapshots:
   semver@7.8.1: {}
 
   siginfo@2.0.0: {}
-
-  slack-block-builder@2.8.0: {}
 
   smol-toml@1.6.1: {}
 

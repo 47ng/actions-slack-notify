@@ -1,8 +1,8 @@
 import * as core from "@actions/core";
-import { IncomingWebhook, IncomingWebhookSendArguments } from "@slack/webhook";
+import { IncomingWebhook } from "@slack/webhook";
 
 import { GitHubActionsEnv } from "./gha";
-import { failure, success } from "./slack";
+import { failure, previewUrl, success } from "./slack";
 
 async function run(): Promise<void> {
   try {
@@ -15,14 +15,17 @@ async function run(): Promise<void> {
     }
     const webhook = new IncomingWebhook(url);
     const status = core.getInput("status") as "success" | "failure" | "cancelled";
+    const jobName = core.getInput("jobName");
     const env = process.env as unknown as GitHubActionsEnv;
     core.info(core.getInput("steps"));
     if (status === "success") {
-      const msg = success(env);
-      await webhook.send(msg as IncomingWebhookSendArguments);
+      const msg = success(env, jobName);
+      core.info(previewUrl(msg.blocks));
+      await webhook.send(msg);
     } else if (status === "failure") {
-      const msg = failure(env, JSON.parse(core.getInput("steps")));
-      await webhook.send(msg as IncomingWebhookSendArguments);
+      const msg = failure(env, jobName, JSON.parse(core.getInput("steps")));
+      core.info(previewUrl(msg.blocks));
+      await webhook.send(msg);
     }
   } catch (error) {
     if (error instanceof Error) {
