@@ -1,3 +1,4 @@
+import { expect, test } from 'vitest'
 import { getRefContext } from '../src/gha'
 
 test('getRefContext - branch', () => {

@@ -7,22 +7,36 @@ on: # rebuild any PRs and main branch changes
       - main
       - 'releases/*'
 
+# Least privilege: jobs only need to read the repo to check out and run.
+permissions:
+  contents: read
+
 jobs:
-  build: # make sure build/ci work properly
+  build: # validate, ensure dist/ is in sync, then dogfood the action
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - id: install-dependencies
-        run: yarn
-      - id: build
-        run: yarn build
-      - id: package
-        run: yarn package
-      - id: test
-        run: yarn test
-      - id: lint
-        run: yarn lint
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6.0.8
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm package
+      - name: Ensure dist/ is up to date
+        # SHA-pinned consumers run the committed bundle, so a stale dist/ must
+        # fail CI. --porcelain also catches any newly emitted untracked files,
+        # which `git diff` alone would miss.
+        run: |
+          if [ -n "$(git status --porcelain dist/)" ]; then
+            echo "::error::dist/ is out of date — run 'pnpm package' and commit the result."
+            git status --porcelain dist/
+            git diff dist/
+            exit 1
+          fi
       - uses: ./
         if: always()
         with:
@@ -32,10 +46,10 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
   test: # make sure the action works on a clean machine without building
-    runs-on: ubuntu-latest
     name: Integration Tests
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
       - uses: ./
         if: always()
         with:
