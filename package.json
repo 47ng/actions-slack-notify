@@ -3,26 +3,27 @@
   "version": "1.0.2",
   "private": true,
   "description": "TypeScript template action",
-  "packageManager": "pnpm@11.5.0",
-  "scripts": {
-    "typecheck": "tsc --noEmit",
-    "format": "prettier --write **/*.ts",
-    "format-check": "prettier --check **/*.ts",
-    "lint": "eslint src/**/*.ts",
-    "test": "vitest run",
-    "package": "tsdown"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/actions/typescript-action.git"
-  },
   "keywords": [
     "actions",
     "node",
     "setup"
   ],
-  "author": "",
   "license": "MIT",
+  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/actions/typescript-action.git"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "deadcode": "knip",
+    "test": "vitest run",
+    "package": "tsdown",
+    "validate": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm deadcode && pnpm test"
+  },
   "dependencies": {
     "@actions/core": "^3.0.1",
     "@slack/webhook": "7.0.9",
@@ -30,14 +31,12 @@
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
-    "@typescript-eslint/parser": "^7.5.0",
-    "eslint": "^8.57.0",
-    "eslint-plugin-github": "^4.10.2",
-    "eslint-plugin-jest": "^27.9.0",
-    "js-yaml": "^4.1.0",
-    "prettier": "3.2.5",
+    "knip": "6.14.2",
+    "oxfmt": "0.52.0",
+    "oxlint": "1.67.0",
     "tsdown": "^0.22.1",
     "typescript": "^6.0.3",
     "vitest": "4.1.7"
-  }
+  },
+  "packageManager": "pnpm@11.5.0"
 }

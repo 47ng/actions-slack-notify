@@ -7,14 +7,14 @@ branding:
 inputs:
   status:
     required: true
-    description: 'The status of the job'
+    description: "The status of the job"
   steps:
-    description: 'Set to `toJson(steps)` (in double curly-braces) to detail out successful/failed steps'
+    description: "Set to `toJson(steps)` (in double curly-braces) to detail out successful/failed steps"
     required: false
-    default: '{}'
+    default: "{}"
   jobName:
-    description: 'The name of the job'
+    description: "The name of the job"
     required: false
 runs:
-  using: 'node24'
-  main: 'dist/index.js'
+  using: "node24"
+  main: "dist/index.js"

@@ -5,7 +5,7 @@ on: # rebuild any PRs and main branch changes
   push:
     branches:
       - main
-      - 'releases/*'
+      - "releases/*"
 
 # Least privilege: jobs only need to read the repo to check out and run.
 permissions:
@@ -23,8 +23,7 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm typecheck
-      - run: pnpm test
+      - run: pnpm validate
       - run: pnpm package
       - name: Ensure dist/ is up to date
         # SHA-pinned consumers run the committed bundle, so a stale dist/ must
