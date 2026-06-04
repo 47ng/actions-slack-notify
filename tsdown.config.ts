@@ -10,7 +10,7 @@ export default defineConfig({
   dts: false,
   outDir: "dist",
   deps: {
-    alwaysBundle: ["@actions/core", "zod"],
+    alwaysBundle: ["@actions/core", "valibot"],
   },
   // @actions/core's barrel statically imports its OIDC/http-client/exec helpers
   // that we never call; default (conservative) tree-shaking keeps them, dragging

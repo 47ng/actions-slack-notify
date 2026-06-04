@@ -1,23 +1,23 @@
-import * as z from "zod";
+import * as v from "valibot";
 
 // The action only reads a handful of the GITHUB_* variables. Parse just those
 // into a lean, typed object — each field format-checked, everything else
-// dropped (z.object strips unknown keys, so there is no passthrough).
-const githubEnvSchema = z.object({
-  GITHUB_WORKFLOW: z.string().min(1),
-  GITHUB_REPOSITORY: z.string().min(1),
-  GITHUB_SHA: z.string().min(1),
-  GITHUB_REF: z.string().min(1),
-  GITHUB_SERVER_URL: z.url().default("https://github.com"),
-  GITHUB_RUN_ID: z.string().min(1),
-  GITHUB_EVENT_NAME: z.string().min(1),
-  GITHUB_HEAD_REF: z.string().optional(), // Only set for pull request events.
+// dropped (v.object strips unknown keys, so there is no passthrough).
+const githubEnvSchema = v.object({
+  GITHUB_WORKFLOW: v.pipe(v.string(), v.nonEmpty()),
+  GITHUB_REPOSITORY: v.pipe(v.string(), v.nonEmpty()),
+  GITHUB_SHA: v.pipe(v.string(), v.nonEmpty()),
+  GITHUB_REF: v.pipe(v.string(), v.nonEmpty()),
+  GITHUB_SERVER_URL: v.optional(v.pipe(v.string(), v.url()), "https://github.com"),
+  GITHUB_RUN_ID: v.pipe(v.string(), v.nonEmpty()),
+  GITHUB_EVENT_NAME: v.pipe(v.string(), v.nonEmpty()),
+  GITHUB_HEAD_REF: v.optional(v.string()), // Only set for pull request events.
 });
 
-export type GithubEnv = z.infer<typeof githubEnvSchema>;
+export type GithubEnv = v.InferOutput<typeof githubEnvSchema>;
 
 export function parseEnv(env: NodeJS.ProcessEnv): GithubEnv {
-  return githubEnvSchema.parse(env);
+  return v.parse(githubEnvSchema, env);
 }
 
 // --
