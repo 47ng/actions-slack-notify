@@ -12,3 +12,7 @@
 # install scripts.
 minimumReleaseAge: 4320
 enablePrePostScripts: false
+allowBuilds:
+  # msw's build script only installs the browser service worker; we use it as a
+  # node-side request mock in tests, so its install script is unnecessary.
+  msw: false

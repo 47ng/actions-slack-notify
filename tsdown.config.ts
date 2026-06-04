@@ -13,6 +13,11 @@ export default defineConfig({
   // would otherwise emit .cjs for the cjs format).
   outExtensions: () => ({ js: ".js" }),
   deps: {
-    alwaysBundle: ["@actions/core", "@slack/webhook", "zod"],
+    alwaysBundle: ["@actions/core", "zod"],
   },
+  // @actions/core's barrel statically imports its OIDC/http-client/exec helpers
+  // that we never call; default (conservative) tree-shaking keeps them, dragging
+  // in undici + tunnel. Asserting no module side effects lets rolldown drop that
+  // entire unused subtree (~700 kB).
+  treeshake: { moduleSideEffects: false },
 });

@@ -29,13 +29,14 @@
   },
   "dependencies": {
     "@actions/core": "^3.0.1",
-    "@slack/webhook": "7.0.9",
     "zod": "4.4.3"
   },
   "devDependencies": {
     "@slack/types": "2.21.1",
+    "@slack/webhook": "7.0.9",
     "@types/node": "^24.0.0",
     "knip": "6.14.2",
+    "msw": "2.14.6",
     "oxfmt": "0.52.0",
     "oxlint": "1.67.0",
     "tsdown": "^0.22.1",

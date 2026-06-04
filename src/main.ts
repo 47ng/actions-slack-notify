@@ -1,9 +1,8 @@
 import * as core from "@actions/core";
-import { IncomingWebhook } from "@slack/webhook";
 
 import { parseEnv } from "./gha";
 import { parseStatus, parseSteps, parseWebhookUrl } from "./inputs";
-import { failure, previewUrl, success } from "./slack";
+import { failure, postToSlack, previewUrl, success } from "./slack";
 
 async function run(): Promise<void> {
   try {
@@ -14,7 +13,6 @@ async function run(): Promise<void> {
       );
       return;
     }
-    const webhook = new IncomingWebhook(url);
     core.info(core.getInput("steps"));
 
     const status = parseStatus(core.getInput("status"));
@@ -30,7 +28,7 @@ async function run(): Promise<void> {
         : failure(env, jobName, parseSteps(core.getInput("steps")));
 
     core.info(previewUrl(msg.blocks));
-    await webhook.send(msg);
+    await postToSlack(url, msg);
   } catch (error) {
     if (error instanceof Error) {
       core.setFailed(error.message);

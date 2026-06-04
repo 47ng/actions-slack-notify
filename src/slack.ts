@@ -125,3 +125,42 @@ function getActions(env: GithubEnv, status: "success" | "failure"): ActionsBlock
 export function previewUrl(blocks: IncomingWebhookSendArguments["blocks"]): string {
   return `https://app.slack.com/block-kit-builder/#${encodeURIComponent(JSON.stringify({ blocks }))}`;
 }
+
+// --
+
+// Retry budget for transient failures (rate limiting & 5xx), mirroring the
+// resilience @slack/webhook gave us before we dropped it for native fetch.
+const MAX_RETRIES = 3;
+// Cap on a single backoff so a stray Retry-After can't stall the whole job.
+const MAX_BACKOFF_MS = 30_000;
+
+export async function postToSlack(
+  url: string,
+  message: IncomingWebhookSendArguments,
+): Promise<void> {
+  const body = JSON.stringify(message);
+  for (let attempt = 0; ; attempt++) {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body,
+    });
+    if (response.ok) {
+      return;
+    }
+    // Slack rate-limits with 429 and signals transient outages with 5xx; both
+    // are worth retrying. 4xx (bad payload, revoked webhook) is terminal.
+    const retriable = response.status === 429 || response.status >= 500;
+    if (!retriable || attempt >= MAX_RETRIES) {
+      const detail = await response.text().catch(() => "");
+      throw new Error(
+        `Slack webhook responded ${response.status} ${response.statusText}${detail ? `: ${detail}` : ""}`,
+      );
+    }
+    // Honor Retry-After (seconds) when Slack sends it, else exponential backoff.
+    const retryAfter = Number(response.headers.get("retry-after"));
+    const requestedMs =
+      Number.isFinite(retryAfter) && retryAfter > 0 ? retryAfter * 1000 : 2 ** attempt * 1000;
+    await new Promise((resolve) => setTimeout(resolve, Math.min(requestedMs, MAX_BACKOFF_MS)));
+  }
+}
