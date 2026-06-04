@@ -41,7 +41,7 @@ jobs:
       # ...other steps...
 
       - name: Notify Slack
-        uses: 47ng/actions-slack-notify@739bcdcf983a0073a14c97b5f6e41e16e5dd5d70
+        uses: 47ng/actions-slack-notify@454fe45e7ca3f21d7f7be774044de1664f1b22c1
         if: always()
         with:
           status: ${{ job.status }}
