@@ -1,11 +1,11 @@
 ---
 # asn-zaqr
 title: Modernize the GitHub Action to François's stack
-status: todo
+status: completed
 type: epic
 priority: high
 created_at: 2026-06-03T07:27:28Z
-updated_at: 2026-06-03T07:27:28Z
+updated_at: 2026-06-04T05:29:49Z
 ---
 
 Migrate `actions-slack-notify` off the 2021 `actions/typescript-action` template onto François's preferred stack, **without changing what the action does**. Split into vertical slices — see child beans (`asn-mdr4` rails + snapshots, then `asn-2p6f`/`asn-ealg`/`asn-lp3m`, plus independent `asn-z6x1`).
@@ -94,3 +94,20 @@ Re-tool the project to the standard stack — **pnpm 11 (secure config), oxlint,
 ## Further Notes
 
 - `@actions/core` 1.x → 3.x is two majors — check its changelog for input/logging API breaks during the bump.
+
+## Summary of Changes
+
+Delivered. All child slices completed with no change to the emitted Slack payload (golden snapshots byte-identical throughout):
+
+- **S1** (`asn-mdr4`) — pnpm + node24 + tsdown + vitest rails; behaviour locked by golden snapshots.
+- **S2** (`asn-2p6f`) — static quality gates: oxlint, oxfmt, knip, single `pnpm validate`.
+- **S3** (`asn-ealg`) — `slack-block-builder` → hand-rolled `@slack/types` Block Kit JSON, pure builders.
+- **S4** (`asn-lp3m`) — zod v4 input/env parsers replacing unsafe `as` casts and bare `JSON.parse`.
+- **S5** (`asn-z6x1`) — real repo identity + README rewrite (template identity removed).
+- **+** (`asn-07e7`) — `SLACK_WEBHOOK_URL` format validation: malformed URL skips cleanly instead of failing at send.
+
+### Deferred follow-ups
+
+- **CHANGELOG** mapping versions → commit SHAs, to be spec'd in a later session (supports the SHA-pin-only release posture — see below).
+- **Release the modernized version**, then replace the README usage example's `<commit-sha>` placeholder with that release's SHA.
+- **Release posture:** a published GitHub Release is inseparable from a git tag (deleting the tag reverts the release to a hidden draft and breaks `@x.y.z` for consumers), so forcing SHA-pinning means not cutting version tags at all and documenting SHAs in the CHANGELOG instead.
