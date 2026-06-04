@@ -2,17 +2,20 @@
   "name": "actions-slack-notify",
   "version": "1.0.2",
   "private": true,
-  "description": "TypeScript template action",
+  "description": "GitHub Action to notify job status to Slack, with context and useful links",
   "keywords": [
-    "actions",
-    "node",
-    "setup"
+    "ci",
+    "github-actions",
+    "notification",
+    "slack",
+    "slack-notification",
+    "webhook"
   ],
   "license": "MIT",
-  "author": "",
+  "author": "François Best (https://francoisbest.com)",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/actions/typescript-action.git"
+    "url": "git+https://github.com/47ng/actions-slack-notify.git"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
