@@ -1,0 +1,240 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`failure on a plain branch without steps 1`] = `
+{
+  "blocks": [
+    {
+      "text": {
+        "text": "*🚨  CI* failed on <https://github.com/47ng/actions-slack-notify|*47ng/actions-slack-notify*>",
+        "type": "mrkdwn",
+      },
+      "type": "section",
+    },
+    {
+      "elements": [
+        {
+          "text": "From <https://github.com/47ng/actions-slack-notify/commit/ffac537e6cbbf934b08745a378932722df287a53|\`ffac537e\`> on branch *feat/some-branch*",
+          "type": "mrkdwn",
+        },
+        {
+          "text": "Triggered by *push*",
+          "type": "mrkdwn",
+        },
+      ],
+      "type": "context",
+    },
+    {
+      "elements": [
+        {
+          "style": "danger",
+          "text": {
+            "text": "View Failed Workflow",
+            "type": "plain_text",
+          },
+          "type": "button",
+          "url": "https://github.com/47ng/actions-slack-notify/actions/runs/123456789",
+        },
+      ],
+      "type": "actions",
+    },
+  ],
+  "text": "🚨  CI failed on 47ng/actions-slack-notify",
+}
+`;
+
+exports[`failure with steps 1`] = `
+{
+  "blocks": [
+    {
+      "text": {
+        "text": "*🚨  CI* failed on <https://github.com/47ng/actions-slack-notify|*47ng/actions-slack-notify*>",
+        "type": "mrkdwn",
+      },
+      "type": "section",
+    },
+    {
+      "text": {
+        "text": "✔︎  build
+*✘  test*
+_○  lint_",
+        "type": "mrkdwn",
+      },
+      "type": "section",
+    },
+    {
+      "elements": [
+        {
+          "text": "From <https://github.com/47ng/actions-slack-notify/commit/ffac537e6cbbf934b08745a378932722df287a53|\`ffac537e\`> on branch *main*",
+          "type": "mrkdwn",
+        },
+        {
+          "text": "Triggered by *push*",
+          "type": "mrkdwn",
+        },
+      ],
+      "type": "context",
+    },
+    {
+      "elements": [
+        {
+          "style": "danger",
+          "text": {
+            "text": "View Failed Workflow",
+            "type": "plain_text",
+          },
+          "type": "button",
+          "url": "https://github.com/47ng/actions-slack-notify/actions/runs/123456789",
+        },
+      ],
+      "type": "actions",
+    },
+  ],
+  "text": "🚨  CI failed on 47ng/actions-slack-notify",
+}
+`;
+
+exports[`success on a branch 1`] = `
+{
+  "blocks": [
+    {
+      "text": {
+        "text": "*✔︎  CI* passed on <https://github.com/47ng/actions-slack-notify|*47ng/actions-slack-notify*>",
+        "type": "mrkdwn",
+      },
+      "type": "section",
+    },
+    {
+      "elements": [
+        {
+          "text": "From <https://github.com/47ng/actions-slack-notify/commit/ffac537e6cbbf934b08745a378932722df287a53|\`ffac537e\`> on branch *main*",
+          "type": "mrkdwn",
+        },
+        {
+          "text": "Triggered by *push*",
+          "type": "mrkdwn",
+        },
+      ],
+      "type": "context",
+    },
+    {
+      "elements": [
+        {
+          "text": {
+            "text": "View Workflow",
+            "type": "plain_text",
+          },
+          "type": "button",
+          "url": "https://github.com/47ng/actions-slack-notify/actions/runs/123456789",
+        },
+      ],
+      "type": "actions",
+    },
+  ],
+  "text": "✔︎  CI passed on 47ng/actions-slack-notify",
+}
+`;
+
+exports[`success on a dependabot ref 1`] = `
+{
+  "blocks": [
+    {
+      "text": {
+        "text": "*✔︎  CI* passed on <https://github.com/47ng/actions-slack-notify|*47ng/actions-slack-notify*>",
+        "type": "mrkdwn",
+      },
+      "type": "section",
+    },
+    {
+      "text": {
+        "text": "📦  *@slack/webhook* 7.0.9 _(by Dependabot)_",
+        "type": "mrkdwn",
+      },
+      "type": "section",
+    },
+    {
+      "elements": [
+        {
+          "text": "From <https://github.com/47ng/actions-slack-notify/commit/ffac537e6cbbf934b08745a378932722df287a53|\`ffac537e\`> on PR *#7*",
+          "type": "mrkdwn",
+        },
+        {
+          "text": "Triggered by *pull_request*",
+          "type": "mrkdwn",
+        },
+      ],
+      "type": "context",
+    },
+    {
+      "elements": [
+        {
+          "text": {
+            "text": "View Workflow",
+            "type": "plain_text",
+          },
+          "type": "button",
+          "url": "https://github.com/47ng/actions-slack-notify/actions/runs/123456789",
+        },
+        {
+          "text": {
+            "text": "View Pull Request #7",
+            "type": "plain_text",
+          },
+          "type": "button",
+          "url": "https://github.com/47ng/actions-slack-notify/pull/7",
+        },
+      ],
+      "type": "actions",
+    },
+  ],
+  "text": "✔︎  CI passed on 47ng/actions-slack-notify",
+}
+`;
+
+exports[`success on a pull request ref 1`] = `
+{
+  "blocks": [
+    {
+      "text": {
+        "text": "*✔︎  CI* passed on <https://github.com/47ng/actions-slack-notify|*47ng/actions-slack-notify*>",
+        "type": "mrkdwn",
+      },
+      "type": "section",
+    },
+    {
+      "elements": [
+        {
+          "text": "From <https://github.com/47ng/actions-slack-notify/commit/ffac537e6cbbf934b08745a378932722df287a53|\`ffac537e\`> on PR *#42*",
+          "type": "mrkdwn",
+        },
+        {
+          "text": "Triggered by *pull_request*",
+          "type": "mrkdwn",
+        },
+      ],
+      "type": "context",
+    },
+    {
+      "elements": [
+        {
+          "text": {
+            "text": "View Workflow",
+            "type": "plain_text",
+          },
+          "type": "button",
+          "url": "https://github.com/47ng/actions-slack-notify/actions/runs/123456789",
+        },
+        {
+          "text": {
+            "text": "View Pull Request #42",
+            "type": "plain_text",
+          },
+          "type": "button",
+          "url": "https://github.com/47ng/actions-slack-notify/pull/42",
+        },
+      ],
+      "type": "actions",
+    },
+  ],
+  "text": "✔︎  CI passed on 47ng/actions-slack-notify",
+}
+`;

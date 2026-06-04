@@ -1,0 +1,18 @@
+# Supply-chain hardening (pnpm 11+).
+#
+# - minimumReleaseAge: a dependency version must have been published at least
+#   this many minutes ago (4320 = 3 days) before pnpm will install it, giving
+#   time for a compromised fresh release to be caught and pulled.
+# - enablePrePostScripts: don't auto-run this package's own pre/post lifecycle
+#   scripts.
+#
+# Note: pnpm 11 removed `onlyBuiltDependencies` in favour of `allowBuilds`, and
+# now blocks ALL dependency build/lifecycle scripts by default. Leaving
+# `allowBuilds` unset is the secure "empty allowlist" — no dependency may run
+# install scripts.
+minimumReleaseAge: 4320
+enablePrePostScripts: false
+allowBuilds:
+  # msw's build script only installs the browser service worker; we use it as a
+  # node-side request mock in tests, so its install script is unnecessary.
+  msw: false
