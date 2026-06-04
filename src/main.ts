@@ -2,15 +2,15 @@ import * as core from "@actions/core";
 import { IncomingWebhook } from "@slack/webhook";
 
 import { parseEnv } from "./gha";
-import { parseStatus, parseSteps } from "./inputs";
+import { parseStatus, parseSteps, parseWebhookUrl } from "./inputs";
 import { failure, previewUrl, success } from "./slack";
 
 async function run(): Promise<void> {
   try {
-    const url = process.env.SLACK_WEBHOOK_URL;
+    const url = parseWebhookUrl(process.env.SLACK_WEBHOOK_URL);
     if (!url) {
       core.info(
-        "No SLACK_WEBHOOK_URL environment variable provided, skipping sending Slack notification.",
+        "SLACK_WEBHOOK_URL is missing or not a valid Slack webhook URL, skipping sending Slack notification.",
       );
       return;
     }

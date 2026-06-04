@@ -34683,6 +34683,11 @@ const stepsSchema = record(string(), object({ outcome: _enum([
 function parseSteps(raw) {
 	return stepsSchema.parse(JSON.parse(raw));
 }
+const webhookUrlSchema = string().regex(/^https:\/\/hooks\.slack\.com\/services\/[A-Z0-9]+\/[A-Z0-9]+\/[\w-]+$/);
+function parseWebhookUrl(raw) {
+	const result = webhookUrlSchema.safeParse(raw);
+	return result.success ? result.data : void 0;
+}
 //#endregion
 //#region src/slack.ts
 function section(text) {
@@ -34781,9 +34786,9 @@ function previewUrl(blocks) {
 //#region src/main.ts
 async function run() {
 	try {
-		const url = process.env.SLACK_WEBHOOK_URL;
+		const url = parseWebhookUrl(process.env.SLACK_WEBHOOK_URL);
 		if (!url) {
-			info("No SLACK_WEBHOOK_URL environment variable provided, skipping sending Slack notification.");
+			info("SLACK_WEBHOOK_URL is missing or not a valid Slack webhook URL, skipping sending Slack notification.");
 			return;
 		}
 		const webhook = new import_dist.IncomingWebhook(url);

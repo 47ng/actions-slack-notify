@@ -22,3 +22,19 @@ export type Steps = z.infer<typeof stepsSchema>;
 export function parseSteps(raw: string): Steps {
   return stepsSchema.parse(JSON.parse(raw));
 }
+
+// A Slack incoming-webhook URL: https://hooks.slack.com/services/<T>/<B>/<token>.
+// Anything else (absent, not a URL, wrong host/shape) parses to `undefined` so
+// the caller skips cleanly instead of failing later at send time.
+// The host + `/services/` path are the parts worth pinning (they keep the
+// request pointed at Slack); the token segment stays permissive (`[\w-]+`) so a
+// valid webhook is never falsely rejected — a false negative would silently
+// drop a wanted notification.
+const webhookUrlSchema = z
+  .string()
+  .regex(/^https:\/\/hooks\.slack\.com\/services\/[A-Z0-9]+\/[A-Z0-9]+\/[\w-]+$/);
+
+export function parseWebhookUrl(raw: string | undefined): string | undefined {
+  const result = webhookUrlSchema.safeParse(raw);
+  return result.success ? result.data : undefined;
+}

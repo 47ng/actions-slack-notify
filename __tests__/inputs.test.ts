@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 
-import { parseStatus, parseSteps } from "../src/inputs";
+import { parseStatus, parseSteps, parseWebhookUrl } from "../src/inputs";
 
 test("parseStatus accepts success and failure", () => {
   expect(parseStatus("success")).toBe("success");
@@ -32,4 +32,28 @@ test("parseSteps throws on malformed JSON", () => {
 
 test("parseSteps rejects an unknown step outcome", () => {
   expect(() => parseSteps(JSON.stringify({ build: { outcome: "bogus" } }))).toThrow();
+});
+
+test("parseWebhookUrl accepts a Slack incoming-webhook URL", () => {
+  const url = "https://hooks.slack.com/services/T00000000/B00000000/example-webhook-token";
+  expect(parseWebhookUrl(url)).toBe(url);
+});
+
+test("parseWebhookUrl accepts tokens with underscores and hyphens", () => {
+  const url = "https://hooks.slack.com/services/T0ABC123/B0DEF456/aZ9_dash-token";
+  expect(parseWebhookUrl(url)).toBe(url);
+});
+
+test("parseWebhookUrl returns undefined for missing or malformed URLs", () => {
+  // Anything that isn't a Slack webhook URL bails into the same skip path as an
+  // absent variable, rather than failing later at send time.
+  expect(parseWebhookUrl(undefined)).toBeUndefined();
+  expect(parseWebhookUrl("")).toBeUndefined();
+  expect(parseWebhookUrl("not a url")).toBeUndefined();
+  expect(parseWebhookUrl("https://example.com/webhook")).toBeUndefined();
+  expect(parseWebhookUrl("https://hooks.slack.com/services/T00000000")).toBeUndefined();
+  // Scheme downgrade must be rejected (guards against a future regex flag slip).
+  expect(
+    parseWebhookUrl("http://hooks.slack.com/services/T00000000/B00000000/XXXX"),
+  ).toBeUndefined();
 });
