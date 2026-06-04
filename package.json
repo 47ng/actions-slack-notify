@@ -26,7 +26,8 @@
   },
   "dependencies": {
     "@actions/core": "^3.0.1",
-    "@slack/webhook": "7.0.9"
+    "@slack/webhook": "7.0.9",
+    "zod": "4.4.3"
   },
   "devDependencies": {
     "@slack/types": "2.21.1",

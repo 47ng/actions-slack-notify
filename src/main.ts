@@ -1,7 +1,8 @@
 import * as core from "@actions/core";
 import { IncomingWebhook } from "@slack/webhook";
 
-import { GitHubActionsEnv } from "./gha";
+import { parseEnv } from "./gha";
+import { parseStatus, parseSteps } from "./inputs";
 import { failure, previewUrl, success } from "./slack";
 
 async function run(): Promise<void> {
@@ -14,19 +15,22 @@ async function run(): Promise<void> {
       return;
     }
     const webhook = new IncomingWebhook(url);
-    const status = core.getInput("status") as "success" | "failure" | "cancelled";
-    const jobName = core.getInput("jobName");
-    const env = process.env as unknown as GitHubActionsEnv;
     core.info(core.getInput("steps"));
-    if (status === "success") {
-      const msg = success(env, jobName);
-      core.info(previewUrl(msg.blocks));
-      await webhook.send(msg);
-    } else if (status === "failure") {
-      const msg = failure(env, jobName, JSON.parse(core.getInput("steps")));
-      core.info(previewUrl(msg.blocks));
-      await webhook.send(msg);
+
+    const status = parseStatus(core.getInput("status"));
+    if (status === undefined) {
+      return; // Unknown status (e.g. cancelled): no-op, but exit cleanly.
     }
+
+    const env = parseEnv(process.env);
+    const jobName = core.getInput("jobName");
+    const msg =
+      status === "success"
+        ? success(env, jobName)
+        : failure(env, jobName, parseSteps(core.getInput("steps")));
+
+    core.info(previewUrl(msg.blocks));
+    await webhook.send(msg);
   } catch (error) {
     if (error instanceof Error) {
       core.setFailed(error.message);

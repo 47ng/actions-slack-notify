@@ -1,20 +1,14 @@
 import type { ActionsBlock, Button, ContextBlock, KnownBlock, SectionBlock } from "@slack/types";
 import type { IncomingWebhookSendArguments } from "@slack/webhook";
 
-import {
-  type GitHubActionsEnv,
-  getPRNumber,
-  getRefContext,
-  getURLs,
-  parseDependabotRef,
-  type Steps,
-} from "./gha";
+import { type GithubEnv, getPRNumber, getRefContext, getURLs, parseDependabotRef } from "./gha";
+import type { Steps } from "./inputs";
 
 function section(text: string): SectionBlock {
   return { type: "section", text: { type: "mrkdwn", text } };
 }
 
-export function success(env: GitHubActionsEnv, jobName: string): IncomingWebhookSendArguments {
+export function success(env: GithubEnv, jobName: string): IncomingWebhookSendArguments {
   const { GITHUB_WORKFLOW, GITHUB_REPOSITORY, GITHUB_HEAD_REF } = env;
   const urls = getURLs(env);
   const runName = jobName ? `${GITHUB_WORKFLOW}/${jobName}` : GITHUB_WORKFLOW;
@@ -37,7 +31,7 @@ export function success(env: GitHubActionsEnv, jobName: string): IncomingWebhook
 // --
 
 export function failure(
-  env: GitHubActionsEnv,
+  env: GithubEnv,
   jobName: string,
   steps: Steps,
 ): IncomingWebhookSendArguments {
@@ -83,7 +77,7 @@ export function failure(
 
 // --
 
-function getContext(env: GitHubActionsEnv): ContextBlock {
+function getContext(env: GithubEnv): ContextBlock {
   const urls = getURLs(env);
   const shortSha = env.GITHUB_SHA.slice(0, 8);
   return {
@@ -103,7 +97,7 @@ function getContext(env: GitHubActionsEnv): ContextBlock {
 
 // --
 
-function getActions(env: GitHubActionsEnv, status: "success" | "failure"): ActionsBlock {
+function getActions(env: GithubEnv, status: "success" | "failure"): ActionsBlock {
   const urls = getURLs(env);
   const viewWorkflow: Button = {
     type: "button",

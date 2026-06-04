@@ -14,6 +14,9 @@ importers:
       '@slack/webhook':
         specifier: 7.0.9
         version: 7.0.9
+      zod:
+        specifier: 4.4.3
+        version: 4.4.3
     devDependencies:
       '@slack/types':
         specifier: 2.21.1

@@ -1,6 +1,7 @@
 import { expect, test } from "vitest";
 
-import type { GitHubActionsEnv, Steps } from "../src/gha";
+import type { GithubEnv } from "../src/gha";
+import type { Steps } from "../src/inputs";
 import { failure, previewUrl, success } from "../src/slack";
 
 // The wire payload is what `webhook.send` JSON-serializes. Normalising through
@@ -11,7 +12,7 @@ function payload(message: object): unknown {
   return JSON.parse(JSON.stringify(message));
 }
 
-function makeEnv(overrides: Partial<GitHubActionsEnv> = {}): GitHubActionsEnv {
+function makeEnv(overrides: Partial<GithubEnv> = {}): GithubEnv {
   return {
     GITHUB_WORKFLOW: "CI",
     GITHUB_REPOSITORY: "47ng/actions-slack-notify",
@@ -21,7 +22,7 @@ function makeEnv(overrides: Partial<GitHubActionsEnv> = {}): GitHubActionsEnv {
     GITHUB_RUN_ID: "123456789",
     GITHUB_EVENT_NAME: "push",
     ...overrides,
-  } as GitHubActionsEnv;
+  } as GithubEnv;
 }
 
 // Golden snapshots captured from the original slack-block-builder
