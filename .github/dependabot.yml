@@ -7,3 +7,12 @@ updates:
     # Check the npm registry for updates every day (weekdays)
     schedule:
       interval: "daily"
+    # Supply-chain hardening: mirror the `minimumReleaseAge: 4320` (3 days)
+    # enforced in pnpm-workspace.yaml. A version must have been published at
+    # least this many days ago before Dependabot opens a PR for it, giving time
+    # for a compromised fresh release to be caught and pulled.
+    cooldown:
+      default-days: 3
+      semver-major-days: 3
+      semver-minor-days: 3
+      semver-patch-days: 3
