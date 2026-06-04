@@ -38,14 +38,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      # … your build/test steps …
+      # ...other steps...
 
       - name: Notify Slack
-        # Pin to the latest release commit SHA from the Releases page:
-        # https://github.com/47ng/actions-slack-notify/releases
-        # e.g. uses: 47ng/actions-slack-notify@<commit-sha> # vX.Y.Z
-        uses: 47ng/actions-slack-notify@<commit-sha>
+        uses: 47ng/actions-slack-notify@739bcdcf983a0073a14c97b5f6e41e16e5dd5d70
         if: always()
         with:
           status: ${{ job.status }}
