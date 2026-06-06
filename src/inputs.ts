@@ -39,3 +39,45 @@ export function parseWebhookUrl(raw: string | undefined): string | undefined {
   const result = v.safeParse(webhookUrlSchema, raw);
   return result.success ? result.output : undefined;
 }
+
+// Release-card inputs. Their *validity* is the mode gate: on a successful job,
+// all three parsing cleanly switches the message from the generic success
+// notice to the release card; anything missing or malformed (GitHub passes ""
+// for absent inputs) parses unsuccessfully and silently falls back — a release
+// is never announced from half-configured inputs, nor does it fail the job.
+
+// npm package name, top-level or scoped (`@scope/name`); npm's name rules
+// (lowercase, URL-safe, no leading dot/underscore).
+const packageNameSchema = v.pipe(
+  v.string(),
+  v.regex(/^(?:@[a-z0-9-~][a-z0-9-._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/),
+);
+
+// semver core with optional prerelease/build suffix (e.g. `1.2.3-beta.4`). A
+// leading `v` is tolerated then stripped, so the internal value is always bare
+// (the npmx URL takes the bare version; display/tag re-add the `v`).
+const versionSchema = v.pipe(
+  v.string(),
+  v.regex(/^v?\d+\.\d+\.\d+(?:-[0-9A-Za-z][0-9A-Za-z.-]*)?(?:\+[0-9A-Za-z][0-9A-Za-z.-]*)?$/),
+  v.transform((raw) => raw.replace(/^v/, "")),
+);
+
+// Free-form label carrying the channel emoji + flavour (e.g. `🚀 latest`,
+// `🧪 beta`), rendered verbatim. Only non-emptiness is required.
+const channelSchema = v.pipe(v.string(), v.nonEmpty());
+
+const releaseSchema = v.object({
+  packageName: packageNameSchema,
+  version: versionSchema,
+  channel: channelSchema,
+});
+export type Release = v.InferOutput<typeof releaseSchema>;
+
+export function parseRelease(raw: {
+  packageName: string;
+  version: string;
+  channel: string;
+}): Release | undefined {
+  const result = v.safeParse(releaseSchema, raw);
+  return result.success ? result.output : undefined;
+}

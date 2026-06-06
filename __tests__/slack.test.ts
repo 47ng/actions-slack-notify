@@ -2,7 +2,7 @@ import { expect, test } from "vitest";
 
 import type { GithubEnv } from "../src/gha";
 import type { Steps } from "../src/inputs";
-import { failure, previewUrl, success } from "../src/slack";
+import { failure, previewUrl, release, success } from "../src/slack";
 
 // The wire payload is what `webhook.send` JSON-serializes. Normalising through
 // JSON drops any `undefined` keys so the snapshot locks the emitted payload
@@ -68,6 +68,34 @@ test("failure on a plain branch without steps", () => {
 test("jobName is injected into the run name", () => {
   const { text } = success(makeEnv(), "Build");
   expect(text).toBe("✔︎  CI/Build passed on 47ng/actions-slack-notify");
+});
+
+test("release card for a GA (latest) release", () => {
+  expect(
+    payload(release(makeEnv(), { packageName: "nuqs", version: "1.2.3", channel: "🚀 latest" })),
+  ).toMatchSnapshot();
+});
+
+test("release card for a beta (prerelease) release", () => {
+  expect(
+    payload(
+      release(makeEnv(), { packageName: "nuqs", version: "1.2.3-beta.4", channel: "🧪 beta" }),
+    ),
+  ).toMatchSnapshot();
+});
+
+test("release card derives URLs from a custom GitHub host (GHES)", () => {
+  const env = makeEnv({ GITHUB_SERVER_URL: "https://ghe.example.com" });
+  const { blocks } = release(env, { packageName: "nuqs", version: "2.8.9", channel: "🚀 latest" });
+  const actions = blocks?.find((b) => b.type === "actions");
+  const urls =
+    actions && "elements" in actions
+      ? actions.elements.map((e) => ("url" in e ? e.url : undefined))
+      : [];
+  expect(urls).toEqual([
+    "https://npmx.dev/package/nuqs/v/2.8.9",
+    "https://ghe.example.com/47ng/actions-slack-notify/releases/tag/v2.8.9",
+  ]);
 });
 
 test("previewUrl builds a decodable block-kit-builder link", () => {

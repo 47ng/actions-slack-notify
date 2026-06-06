@@ -93,6 +93,78 @@ _○  lint_",
 }
 `;
 
+exports[`release card for a GA (latest) release 1`] = `
+{
+  "blocks": [
+    {
+      "text": {
+        "text": "*nuqs v1.2.3* released on 🚀 latest",
+        "type": "mrkdwn",
+      },
+      "type": "section",
+    },
+    {
+      "elements": [
+        {
+          "text": {
+            "text": "View on npmx",
+            "type": "plain_text",
+          },
+          "type": "button",
+          "url": "https://npmx.dev/package/nuqs/v/1.2.3",
+        },
+        {
+          "text": {
+            "text": "Release notes",
+            "type": "plain_text",
+          },
+          "type": "button",
+          "url": "https://github.com/47ng/actions-slack-notify/releases/tag/v1.2.3",
+        },
+      ],
+      "type": "actions",
+    },
+  ],
+  "text": "nuqs v1.2.3 released on 🚀 latest",
+}
+`;
+
+exports[`release card for a beta (prerelease) release 1`] = `
+{
+  "blocks": [
+    {
+      "text": {
+        "text": "*nuqs v1.2.3-beta.4* released on 🧪 beta",
+        "type": "mrkdwn",
+      },
+      "type": "section",
+    },
+    {
+      "elements": [
+        {
+          "text": {
+            "text": "View on npmx",
+            "type": "plain_text",
+          },
+          "type": "button",
+          "url": "https://npmx.dev/package/nuqs/v/1.2.3-beta.4",
+        },
+        {
+          "text": {
+            "text": "Release notes",
+            "type": "plain_text",
+          },
+          "type": "button",
+          "url": "https://github.com/47ng/actions-slack-notify/releases/tag/v1.2.3-beta.4",
+        },
+      ],
+      "type": "actions",
+    },
+  ],
+  "text": "nuqs v1.2.3-beta.4 released on 🧪 beta",
+}
+`;
+
 exports[`success on a branch 1`] = `
 {
   "blocks": [

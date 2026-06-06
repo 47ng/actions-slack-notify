@@ -15,6 +15,15 @@ inputs:
   jobName:
     description: "The name of the job"
     required: false
+  packageName:
+    description: "Release mode: the npm package name (e.g. `nuqs` or `@scope/pkg`). Set together with `version` and `channel` on a successful job to post a release card instead of the generic success message."
+    required: false
+  version:
+    description: "Release mode: the released version, semver, without leading `v` (e.g. `1.2.3` or `1.2.3-beta.4`)."
+    required: false
+  channel:
+    description: "Release mode: a label for the distribution channel, shown as-is (e.g. `🚀 latest` or `🧪 beta`)."
+    required: false
 runs:
   using: "node24"
   main: "dist/index.mjs"
