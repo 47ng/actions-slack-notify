@@ -326,6 +326,27 @@ function regex(requirement, message$1) {
 		}
 	};
 }
+/**
+* Creates a custom transformation action.
+*
+* @param operation The transformation operation.
+*
+* @returns A transform action.
+*/
+/* @__NO_SIDE_EFFECTS__ */
+function transform(operation) {
+	return {
+		kind: "transformation",
+		type: "transform",
+		reference: transform,
+		async: false,
+		operation,
+		"~run"(dataset) {
+			dataset.value = this.operation(dataset.value);
+			return dataset;
+		}
+	};
+}
 /* @__NO_SIDE_EFFECTS__ */
 function url(message$1) {
 	return {
@@ -706,6 +727,15 @@ function parseWebhookUrl(raw) {
 	const result = /* @__PURE__ */ safeParse(webhookUrlSchema, raw);
 	return result.success ? result.output : void 0;
 }
+const releaseSchema = /* @__PURE__ */ object({
+	packageName: /* @__PURE__ */ pipe(/* @__PURE__ */ string(), /* @__PURE__ */ regex(/^(?:@[a-z0-9-~][a-z0-9-._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/)),
+	version: /* @__PURE__ */ pipe(/* @__PURE__ */ string(), /* @__PURE__ */ regex(/^v?\d+\.\d+\.\d+(?:-[0-9A-Za-z][0-9A-Za-z.-]*)?(?:\+[0-9A-Za-z][0-9A-Za-z.-]*)?$/), /* @__PURE__ */ transform((raw) => raw.replace(/^v/, ""))),
+	channel: /* @__PURE__ */ pipe(/* @__PURE__ */ string(), /* @__PURE__ */ nonEmpty())
+});
+function parseRelease(raw) {
+	const result = /* @__PURE__ */ safeParse(releaseSchema, raw);
+	return result.success ? result.output : void 0;
+}
 //#endregion
 //#region src/slack.ts
 function section(text) {
@@ -754,6 +784,33 @@ function failure(env, jobName, steps) {
 	return {
 		text: `🚨  ${runName} failed on ${GITHUB_REPOSITORY}`,
 		blocks
+	};
+}
+function release(env, { packageName, version, channel }) {
+	const { GITHUB_SERVER_URL, GITHUB_REPOSITORY } = env;
+	const npmx = `https://npmx.dev/package/${packageName}/v/${version}`;
+	const notes = `${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/releases/tag/v${version}`;
+	const elements = [{
+		type: "button",
+		text: {
+			type: "plain_text",
+			text: "View on npmx"
+		},
+		url: npmx
+	}, {
+		type: "button",
+		text: {
+			type: "plain_text",
+			text: "Release notes"
+		},
+		url: notes
+	}];
+	return {
+		text: `${packageName} v${version} released on ${channel}`,
+		blocks: [section(`*${packageName} v${version}* released on ${channel}`), {
+			type: "actions",
+			elements
+		}]
 	};
 }
 function getContext(env) {
@@ -822,6 +879,15 @@ async function postToSlack(url, message) {
 }
 //#endregion
 //#region src/main.ts
+function buildMessage(status, env, jobName) {
+	if (status === "failure") return failure(env, jobName, parseSteps(getInput("steps")));
+	const releaseInfo = parseRelease({
+		packageName: getInput("packageName"),
+		version: getInput("version"),
+		channel: getInput("channel")
+	});
+	return releaseInfo ? release(env, releaseInfo) : success(env, jobName);
+}
 async function run() {
 	try {
 		const url = parseWebhookUrl(process.env.SLACK_WEBHOOK_URL);
@@ -832,9 +898,7 @@ async function run() {
 		info(getInput("steps"));
 		const status = parseStatus(getInput("status"));
 		if (status === void 0) return;
-		const env = parseEnv(process.env);
-		const jobName = getInput("jobName");
-		const msg = status === "success" ? success(env, jobName) : failure(env, jobName, parseSteps(getInput("steps")));
+		const msg = buildMessage(status, parseEnv(process.env), getInput("jobName"));
 		info(previewUrl(msg.blocks));
 		await postToSlack(url, msg);
 	} catch (error) {

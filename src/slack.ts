@@ -2,7 +2,7 @@ import type { ActionsBlock, Button, ContextBlock, KnownBlock, SectionBlock } fro
 import type { IncomingWebhookSendArguments } from "@slack/webhook";
 
 import { type GithubEnv, getPRNumber, getRefContext, getURLs, parseDependabotRef } from "./gha";
-import type { Steps } from "./inputs";
+import type { Release, Steps } from "./inputs";
 
 function section(text: string): SectionBlock {
   return { type: "section", text: { type: "mrkdwn", text } };
@@ -72,6 +72,33 @@ export function failure(
   return {
     text: `🚨  ${runName} failed on ${GITHUB_REPOSITORY}`,
     blocks,
+  };
+}
+
+// --
+
+// Release announcement, used in place of the generic success message when a
+// successful job supplies valid release inputs (see `parseRelease`). The npmx
+// URL takes the bare version; the headline, tag and release-notes URL re-add the
+// `v`. The GitHub host comes from the runtime env so the action stays
+// repo/host-agnostic; npmx is a public service, hardcoded.
+export function release(
+  env: GithubEnv,
+  { packageName, version, channel }: Release,
+): IncomingWebhookSendArguments {
+  const { GITHUB_SERVER_URL, GITHUB_REPOSITORY } = env;
+  const npmx = `https://npmx.dev/package/${packageName}/v/${version}`;
+  const notes = `${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/releases/tag/v${version}`;
+  const elements: Button[] = [
+    { type: "button", text: { type: "plain_text", text: "View on npmx" }, url: npmx },
+    { type: "button", text: { type: "plain_text", text: "Release notes" }, url: notes },
+  ];
+  return {
+    text: `${packageName} v${version} released on ${channel}`,
+    blocks: [
+      section(`*${packageName} v${version}* released on ${channel}`),
+      { type: "actions", elements },
+    ],
   };
 }
 
