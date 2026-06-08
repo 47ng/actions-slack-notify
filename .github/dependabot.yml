@@ -6,7 +6,7 @@ updates:
     directory: "/"
     # Check the npm registry for updates every day (weekdays)
     schedule:
-      interval: "daily"
+      interval: "monthly"
     # Supply-chain hardening: mirror the `minimumReleaseAge: 4320` (3 days)
     # enforced in pnpm-workspace.yaml. A version must have been published at
     # least this many days ago before Dependabot opens a PR for it, giving time
